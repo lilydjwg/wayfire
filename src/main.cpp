@@ -259,6 +259,37 @@ void parse_extended_debugging(const std::vector<std::string>& categories)
 // }
 // }
 //
+
+static void increase_nofile_limit(void)
+{
+    if (getrlimit(RLIMIT_NOFILE, &original_nofile_rlimit) != 0)
+    {
+        LOGE("Failed to bump max open files limit: getrlimit(NOFILE) failed");
+        return;
+    }
+
+    struct rlimit new_rlimit = original_nofile_rlimit;
+    new_rlimit.rlim_cur = new_rlimit.rlim_max;
+    if (setrlimit(RLIMIT_NOFILE, &new_rlimit) != 0)
+    {
+        LOGE("Failed to bump max open files limit: setrlimit(NOFILE) failed");
+        LOGI("Running with %d max open files", (int)original_nofile_rlimit.rlim_cur);
+    }
+}
+
+void restore_nofile_limit(void)
+{
+    if (original_nofile_rlimit.rlim_cur == 0)
+    {
+        return;
+    }
+
+    if (setrlimit(RLIMIT_NOFILE, &original_nofile_rlimit) != 0)
+    {
+        LOGE("Failed to restore max open files limit: setrlimit(NOFILE) failed");
+    }
+}
+
 int main(int argc, char *argv[])
 {
     wf::log::log_level_t log_level = wf::log::LOG_LEVEL_INFO;
@@ -409,6 +440,8 @@ int main(int argc, char *argv[])
 
         return EXIT_FAILURE;
     }
+
+    increase_nofile_limit();
 
     auto backend = load_backend(config_backend);
     if (!backend)
