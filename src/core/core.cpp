@@ -467,6 +467,8 @@ pid_t wf::compositor_core_impl_t::run(std::string command)
                 close(dev_null);
             }
 
+            restore_nofile_limit();
+
             _exit(execl("/bin/sh", "/bin/sh", "-c", command.c_str(), NULL));
         } else
         {
