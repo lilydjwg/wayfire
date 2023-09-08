@@ -74,15 +74,15 @@ class wayfire_scale : public wf::plugin_interface_t
     /* If interact is true, no grab is acquired and input events are sent
      * to the scaled surfaces. If it is false, the hard coded bindings
      * are as follows:
-     * KEY_ENTER:
+     * KEY_ENTER | KEY_E:
      * - Ends scale, switching to the workspace of the focused view
      * KEY_ESC:
      * - Ends scale, switching to the workspace where scale was started,
      *   and focuses the initially active view
-     * KEY_UP:
-     * KEY_DOWN:
-     * KEY_LEFT:
-     * KEY_RIGHT:
+     * KEY_UP | KEY_K:
+     * KEY_DOWN | KEY_J:
+     * KEY_LEFT | KEY_H:
+     * KEY_RIGHT | KEY_L:
      * - When scale is active, change focus of the views
      *
      * BTN_LEFT:
@@ -109,9 +109,28 @@ class wayfire_scale : public wf::plugin_interface_t
 
     wf::shared_data::ref_ptr_t<wf::move_drag::core_drag_t> drag_helper;
 
+    /* Callback function for closing the activation window.*/
+    wf::activator_callback close_view_cb;
+    wf::option_wrapper_t<wf::activatorbinding_t> close_view_binding{"scale/close_view"};
+
   public:
     void init() override
     {
+
+        close_view_cb = [=] (auto)
+        {
+            auto view = output->get_active_view();
+            if (get_views().size() <= 1){
+                view->close();
+                deactivate();
+            }
+            else{
+                view->close();
+            }
+            return true;
+
+        };
+
         grab_interface->name = "scale";
         grab_interface->capabilities =
             wf::CAPABILITY_MANAGE_DESKTOP | wf::CAPABILITY_GRAB_INPUT;
@@ -536,7 +555,13 @@ class wayfire_scale : public wf::plugin_interface_t
             // Check kill the view
             if (middle_click_close)
             {
-                view->close();
+                if (get_views().size() <= 1){
+                    view->close();
+                    deactivate();
+                }
+                else{
+                    view->close();
+                }
             }
 
             break;
@@ -643,22 +668,27 @@ class wayfire_scale : public wf::plugin_interface_t
         switch (key)
         {
           case KEY_UP:
+          case KEY_K:
             next_row--;
             break;
 
           case KEY_DOWN:
+          case KEY_J:
             next_row++;
             break;
 
           case KEY_LEFT:
+          case KEY_H:
             next_col--;
             break;
 
           case KEY_RIGHT:
+          case KEY_L:
             next_col++;
             break;
 
           case KEY_ENTER:
+          case KEY_E:
             deactivate();
             select_view(current_focus_view);
             output->focus_view(current_focus_view, true);
@@ -1388,6 +1418,10 @@ class wayfire_scale : public wf::plugin_interface_t
         output->connect_signal("view-unmapped", &view_unmapped);
         output->connect_signal("view-focused", &view_focused);
 
+        output->add_activator(
+            close_view_binding,
+            &close_view_cb);
+
         fade_out_all_except(current_focus_view);
         fade_in(current_focus_view);
 
@@ -1406,6 +1440,8 @@ class wayfire_scale : public wf::plugin_interface_t
         view_minimized.disconnect();
         workspace_changed.disconnect();
         view_geometry_changed.disconnect();
+
+        output->rem_binding(&close_view_cb);
 
         grab_interface->ungrab();
         output->deactivate_plugin(grab_interface);
