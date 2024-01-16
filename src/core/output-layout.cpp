@@ -1051,8 +1051,9 @@ class output_layout_t::impl
 
         if (!noop_output)
         {
-            auto handle = wlr_headless_add_output(noop_backend, 1280, 720);
+            auto handle = wlr_headless_add_output(noop_backend, 3840, 2160);
             handle->data = WF_NOOP_OUTPUT_MAGIC;
+            handle->scale = 2;
             strcpy(handle->name, "NOOP-1");
 
             if (!wlr_output_init_render(handle,
