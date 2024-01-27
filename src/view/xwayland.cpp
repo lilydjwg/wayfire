@@ -291,6 +291,7 @@ void wf::xwayland_update_default_cursor()
 
     auto xc     = wf::get_core_impl().seat->priv->cursor->xcursor;
     auto cursor = wlr_xcursor_manager_get_xcursor(xc, "left_ptr", 1);
+    LOGI("loading xwayland cursor ", cursor);
     if (cursor && (cursor->image_count > 0))
     {
         auto image = cursor->images[0];
