@@ -280,9 +280,11 @@ void wf::xwayland_update_default_cursor()
 
     auto xc     = wf::get_core_impl().seat->priv->cursor->xcursor;
     auto cursor = wlr_xcursor_manager_get_xcursor(xc, "left_ptr", 1);
+    LOGI("loading xwayland cursor ", cursor);
     if (cursor && (cursor->image_count > 0))
     {
         auto image = cursor->images[0];
+        LOGI("setting xwayland cursor ", image);
         wlr_xwayland_set_cursor(xwayland_handle, image->buffer,
             image->width * 4, image->width, image->height,
             image->hotspot_x, image->hotspot_y);
