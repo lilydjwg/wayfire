@@ -21,10 +21,12 @@ struct pointing_device_t : public input_device_impl_t
         wf::option_wrapper_t<std::string> tablet_motion_mode;
         wf::option_wrapper_t<double> touchpad_cursor_speed;
         wf::option_wrapper_t<double> touchpad_scroll_speed;
+        wf::option_wrapper_t<double> trackpoint_cursor_speed;
         wf::option_wrapper_t<std::string> touchpad_click_method;
         wf::option_wrapper_t<std::string> touchpad_scroll_method;
         wf::option_wrapper_t<std::string> touchpad_accel_profile;
         wf::option_wrapper_t<std::string> mouse_accel_profile;
+        wf::option_wrapper_t<std::string> trackpoint_accel_profile;
         wf::option_wrapper_t<bool> touchpad_tap_enabled;
         wf::option_wrapper_t<bool> touchpad_dwt_enabled;
         wf::option_wrapper_t<bool> touchpad_dwmouse_enabled;
