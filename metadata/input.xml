@@ -256,6 +256,40 @@
 				</desc>
 			</option>
 		</group>
+		<!-- Trackpoint configuration -->
+		<group>
+			<_short>Trackpoint</_short>
+			<_long>Configure the trackpoint.</_long>
+			<!-- libinput configuration -->
+			<option name="trackpoint_accel_profile" type="string">
+				<_short>Trackpoint acceleration profile</_short>
+				<_long>Sets the pointer acceleration profile.</_long>
+				<default>default</default>
+				<desc>
+					<value>default</value>
+					<_name>Default</_name>
+				</desc>
+				<desc>
+					<value>none</value>
+					<_name>None</_name>
+				</desc>
+				<desc>
+					<value>adaptive</value>
+					<_name>Adaptive</_name>
+				</desc>
+				<desc>
+					<value>flat</value>
+					<_name>Flat</_name>
+				</desc>
+			</option>
+			<option name="trackpoint_cursor_speed" type="double">
+				<_short>Trackpoint cursor speed</_short>
+				<_long>Changes the pointer acceleration.</_long>
+				<default>0.0</default>
+				<min>-1.0</min>
+				<max>1.0</max>
+			</option>
+		</group>
 		<!-- Cursor configuration -->
 		<group>
 			<_short>Cursor</_short>

@@ -16,6 +16,7 @@ void wf::pointing_device_t::config_t::load()
     mouse_cursor_speed.load_option("input/mouse_cursor_speed");
     touchpad_cursor_speed.load_option("input/touchpad_cursor_speed");
     touchpad_scroll_speed.load_option("input/touchpad_scroll_speed");
+    trackpoint_cursor_speed.load_option("input/trackpoint_cursor_speed");
 
     mouse_natural_scroll_enabled.load_option("input/mouse_natural_scroll");
     touchpad_tap_enabled.load_option("input/tap_to_click");
@@ -26,6 +27,7 @@ void wf::pointing_device_t::config_t::load()
 
     mouse_accel_profile.load_option("input/mouse_accel_profile");
     touchpad_accel_profile.load_option("input/touchpad_accel_profile");
+    trackpoint_accel_profile.load_option("input/trackpoint_accel_profile");
 
     touchpad_click_method.load_option("input/click_method");
     touchpad_scroll_method.load_option("input/scroll_method");
@@ -140,6 +142,11 @@ void wf::pointing_device_t::update_options()
             libinput_device_config_scroll_set_natural_scroll_enabled(dev,
                 (bool)config.touchpad_natural_scroll_enabled);
         }
+    } else if (strcasestr(libinput_device_get_name(dev), "trackpoint"))
+    {
+        libinput_device_config_accel_set_speed(dev,
+            config.trackpoint_cursor_speed);
+        set_libinput_accel_profile(dev, config.trackpoint_accel_profile);
     } else
     {
         libinput_device_config_accel_set_speed(dev,
