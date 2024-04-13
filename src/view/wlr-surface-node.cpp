@@ -477,6 +477,7 @@ void wf::scene::wlr_surface_node_t::handle_leave(wf::output_t *output)
 
 void wf::scene::wlr_surface_node_t::update_pending_outputs()
 {
+    bool entered = false;
     for (auto& [wo, delta] : pending_visibility_delta)
     {
         if (delta > 0)
@@ -486,6 +487,7 @@ void wf::scene::wlr_surface_node_t::update_pending_outputs()
             {
                 wlr_surface_send_enter(surface, wo->handle);
                 wlr_fractional_scale_v1_notify_scale(surface, wo->handle->scale);
+                entered = true;
             }
         } else if (delta < 0)
         {
@@ -506,6 +508,16 @@ void wf::scene::wlr_surface_node_t::update_pending_outputs()
                 visibility.erase(wo);
             }
         }
+    }
+
+    if (entered)
+    {
+        float max_scale = 1;
+        for(auto x : visibility)
+        {
+            max_scale = std::max(max_scale, x.first->handle->scale);
+        }
+        wlr_surface_set_preferred_buffer_scale(surface, max_scale);
     }
 
     pending_visibility_delta.clear();
