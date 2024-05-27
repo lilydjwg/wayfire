@@ -80,6 +80,8 @@ static int handle_config_updated(int fd, uint32_t mask, void *data)
         }
     }
 
+    should_reload &= !std::filesystem::exists(std::filesystem::path(config_file).replace_extension(
+        ".noreload"));
     if (should_reload)
     {
         LOGD("Reloading configuration file");
