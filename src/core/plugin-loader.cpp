@@ -296,6 +296,7 @@ std::optional<std::string> wf::get_plugin_path_for_name(
         auto plugin_path = plugin_prefix / ("lib" + plugin_name + ".so");
         if (std::filesystem::exists(plugin_path))
         {
+            LOGI("Returning plugin path: ", plugin_path);
             return plugin_path;
         }
     }
