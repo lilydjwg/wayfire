@@ -20,7 +20,7 @@ class wayfire_im_text_input_base_t
         {
             if (!next_client || (next_client != client) || (surface != current_focus))
             {
-                LOGC(IM, "Leave text input ti=", dbg_handle);
+                LOGC(IM, "Leave text input ti=", dbg_handle, " current_focus=", current_focus);
                 disable_focus();
                 current_focus = nullptr;
             }

@@ -762,6 +762,13 @@ class wayfire_input_method_v1 : public wf::plugin_interface_t, public wf::text_i
         im_text_inputs_v3[input]->on_commit.set_callback([=] (void *data)
         {
             handle_text_input_v3_commit(input);
+            // the text_input wasn't disabled when leaving, so we don't get the
+            // enable event but we still want IM to be enabled
+            // This happens with Qt 6.8.1, after closing a popup
+            if (input->current_enabled && !current_im_context)
+            {
+                im_handle_text_input_enable(im_text_inputs_v3[input].get());
+            }
         });
 
         im_text_inputs_v3[input]->set_focus_surface(last_focus_surface);
