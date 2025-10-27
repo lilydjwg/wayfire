@@ -196,6 +196,18 @@ wf::scene::wlr_surface_node_t::wlr_surface_node_t(wlr_surface *surface, bool aut
             apply_current_surface_state();
         }
 
+        if (this->surface)
+        {
+            wayfire_toplevel_view view = wf::toplevel_cast(wf::wl_surface_to_wayfire_view(this->surface->resource));
+            if (view && view->toplevel()->current().fullscreen)
+            {
+                if (view->get_title() == "Wine 桌面" || view->get_title() == "glxgears")
+                {
+                    send_frame_done(false);
+                }
+            }
+        }
+
         for (auto& [wo, _] : visibility)
         {
             wo->render->schedule_redraw();
