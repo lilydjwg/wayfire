@@ -6,6 +6,7 @@
 #include <wayfire/plugin.hpp>
 
 #include <fcntl.h>
+#include <poll.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
@@ -147,6 +148,7 @@ int wl_loop_handle_ipc_client_fd_event(int, uint32_t mask, void *data)
 
 static constexpr int MAX_MESSAGE_LEN = (1 << 20);
 static constexpr int HEADER_LEN = 4;
+static constexpr int IPC_WRITE_TIMEOUT_MS = 50;
 
 wf::ipc::client_t::client_t(server_t *ipc, int fd)
 {
@@ -298,6 +300,33 @@ static bool write_exact(int fd, const char *buf, ssize_t n)
         ssize_t w = write(fd, buf, n);
         if (w <= 0)
         {
+            if ((w < 0) && (errno == EINTR))
+            {
+                continue;
+            }
+
+            if ((w < 0) && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
+            {
+                pollfd pfd = {
+                    .fd = fd,
+                    .events = POLLOUT,
+                    .revents = 0,
+                };
+
+                int ready;
+                do
+                {
+                    ready = poll(&pfd, 1, IPC_WRITE_TIMEOUT_MS);
+                } while ((ready < 0) && (errno == EINTR));
+
+                if ((ready <= 0) || (pfd.revents & (POLLERR | POLLHUP | POLLNVAL)))
+                {
+                    return false;
+                }
+
+                continue;
+            }
+
             return false;
         }
 
