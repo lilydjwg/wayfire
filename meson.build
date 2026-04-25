@@ -46,13 +46,8 @@ udev           = dependency('libudev')
 json           = subproject('wf-json', default_options: ['install_header=true']).get_variable('wfjson')
 
 wlroots_base_version = '0.20'
-if get_option('vulkan_effects')
-  wlroots_dep_name = 'wlroots-vkfx-' + wlroots_base_version
-  wlroots_subproject_name = 'wlroots-vkfx'
-else
-  wlroots_dep_name = 'wlroots-' + wlroots_base_version
-  wlroots_subproject_name = 'wlroots'
-endif
+wlroots_dep_name = 'wlroots-' + wlroots_base_version
+wlroots_subproject_name = 'wlroots'
 
 wlroots_min_version = '>=' + wlroots_base_version + '.0'
 wlroots_max_version = '<=' + wlroots_base_version + '.99'
