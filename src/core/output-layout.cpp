@@ -1607,6 +1607,11 @@ class output_layout_t::impl
                 return;
             }
 
+            // DRM outputs can request a new mode at runtime (e.g. VM display
+            // resize). Refresh Wayfire's cached output geometry after the
+            // commit, similarly to nested backends.
+            lo->handle_mode_changed();
+
             send_wlr_configuration();
             for (auto& output : outputs)
             {
