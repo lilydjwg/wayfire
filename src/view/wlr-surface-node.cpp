@@ -201,7 +201,8 @@ wf::scene::wlr_surface_node_t::wlr_surface_node_t(wlr_surface *surface, bool aut
             wayfire_toplevel_view view = wf::toplevel_cast(wf::wl_surface_to_wayfire_view(this->surface->resource));
             if (view && view->toplevel()->current().fullscreen)
             {
-                if (view->get_title() == "Wine 桌面" || view->get_title() == "glxgears")
+                auto title = view->get_title();
+                if (view->get_app_id() == "yuanshen.exe" || title == "Wine 桌面" || title == "glxgears")
                 {
                     send_frame_done(false);
                 }
